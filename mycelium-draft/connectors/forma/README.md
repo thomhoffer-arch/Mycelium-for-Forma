@@ -1,17 +1,32 @@
-# Mycelium-for-Forma
+# mycelium-for-forma
 
-Live connector: Autodesk **Forma** (cloud early-stage design) → Connective Spine.
+A [Mycelium](https://connectivespine.org) connector for **Autodesk Forma** — early-design site/massing records.
 
-> **Purpose = LURE / ONRAMP.** This connector exists to **pull Autodesk-cloud users into Loam and
-> the open OpenAEC stack** — meet them where they are, then migrate their gravity to the open/EU
-> backbone. It is an **acquisition funnel, not a sovereign default** (see
-> [`../../BACKBONE.md`](../../BACKBONE.md) → connector tiers).
+Forma sits before the BIM model exists, so join keys are `zone` and `classification` rather than `ifcGuid`. Useful for tracking early-design intent through to coordination.
 
-- **Auth:** APS **OAuth Bearer** (2-/3-legged). Config: `FORMA_URL`, `FORMA_TOKEN`, `FORMA_PROJECT_ID`.
-- **Join edge:** `zone` / `classification` / project — **NOT** `ifcGuid` (early design has no IFC).
-  Thinner edge by nature; elements with neither don't join (by design).
-- **Freshness:** `live`.
-- **Residency:** Autodesk = **US SaaS → CLOUD-Act exposure.** Must be **labelled** in the hub; never
-  part of the sovereign base layer.
-- **Endpoints:** best-effort, marked `// verify` — confirm against the Forma/APS API docs.
-- **Status:** 🧪 experimental (draft). **License:** Apache-2.0.
+## Install
+
+```sh
+npm install
+```
+
+## Run
+
+```sh
+node connector.mjs
+```
+
+Should print `"conformant": true`.
+
+## Wire it to real Forma
+
+Replace `fetchSource()` in `connector.mjs` with a call to the Forma API. Keep the field shape — the spine adapter normalises and conformance-checks the rest.
+
+## Reference
+
+- [Mycelium spec](https://connectivespine.org/spec/)
+- [mycelium-sdk on npm](https://www.npmjs.com/package/mycelium-sdk)
+
+## License
+
+Apache-2.0
