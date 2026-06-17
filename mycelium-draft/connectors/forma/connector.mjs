@@ -10,8 +10,7 @@
 // Forma is on Autodesk Platform Services (APS): OAuth Bearer auth. EARLY-STAGE design, so the join
 // edge is zone/classification/project — NOT element ifcGuid (no IFC at concept stage).
 // NOTE: endpoint/field names are best-effort vs the Forma/APS API — verify.
-import { stamp, SPINE_VERSION } from '../../lib/spine-adapter.mjs';
-import { checkConformance } from '../../conformance/validate.mjs';
+import { stamp, SPINE_VERSION, checkConformance } from 'mycelium-sdk';
 
 const SOURCE  = 'forma';
 const BASE    = process.env.FORMA_URL || 'https://developer.api.autodesk.com/forma'; // verify
