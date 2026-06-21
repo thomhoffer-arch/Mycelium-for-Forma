@@ -3,6 +3,8 @@
 // Forma is an early-design tool: join keys are zone + classification, not
 // ifcGuid (model GUIDs don't exist yet at this stage).
 import { runAdapter } from 'mycelium-sdk';
+import { fileURLToPath } from 'url';
+
 
 const config = {
   source: 'forma',
@@ -31,6 +33,15 @@ async function fetchSource() {
   ];
 }
 
-const result = await runAdapter(config, { fetchSource });
-console.log(JSON.stringify(result, null, 2));
-process.exit(result.conformant ? 0 : 1);
+export async function run() {
+  const result = await runAdapter(config, { fetchSource });
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(result.conformant ? 0 : 1);
+}
+
+// Auto-run when executed directly (node connector.mjs or packaged binary).
+// __filename is defined in CJS bundles (esbuild/pkg); fall back to import.meta.url in native ESM.
+const _thisFile = typeof __filename !== 'undefined' ? __filename : fileURLToPath(import.meta.url);
+if (process.argv[1] === _thisFile) {
+  run().catch(err => { console.error(err); process.exit(1); });
+}

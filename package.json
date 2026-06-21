@@ -1,0 +1,13 @@
+{
+  "name": "mycelium-for-forma-build",
+  "private": true,
+  "scripts": {
+    "build":     "node build/bundle.mjs",
+    "build:win": "node build/bundle.mjs --target=windows",
+    "build:mac": "node build/bundle.mjs --target=macos"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^5.11.5",
+    "esbuild":      "^0.21.5"
+  }
+}
