@@ -1,0 +1,8 @@
+{
+  "name": "mycelium-sdk",
+  "version": "0.1.0",
+  "description": "Mycelium SDK stub — local shim until mycelium-sdk is published to npm",
+  "type": "module",
+  "main": "index.mjs",
+  "license": "Apache-2.0"
+}
