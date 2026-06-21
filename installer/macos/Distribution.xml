@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+  <title>Mycelium for Forma</title>
+  <organization>org.mycelium</organization>
+  <domains enable_localSystem="true" />
+  <options customize="never" require-scripts="false" rootVolumeOnly="true" />
+  <choices-outline>
+    <line choice="default">
+      <line choice="mycelium-for-forma" />
+    </line>
+  </choices-outline>
+  <choice id="default" />
+  <choice id="mycelium-for-forma" visible="false">
+    <pkg-ref id="org.mycelium.forma" />
+  </choice>
+  <pkg-ref id="org.mycelium.forma" version="0.1.0" onConclusion="none">
+    mycelium-for-forma.pkg
+  </pkg-ref>
+</installer-gui-script>

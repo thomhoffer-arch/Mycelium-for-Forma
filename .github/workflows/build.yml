@@ -1,0 +1,125 @@
+name: Build Installers
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  # ── Windows installer (cross-compiled from Ubuntu) ──────────────────────────
+  build-windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install connector deps
+        run: npm ci
+        working-directory: mycelium-draft/connectors/forma
+
+      - name: Install build deps
+        run: npm install
+
+      - name: Bundle → CJS + build Windows binary
+        run: node build/bundle.mjs --target=windows
+
+      - name: Install NSIS
+        run: sudo apt-get install -y nsis
+
+      - name: Compile Windows installer
+        run: makensis installer/windows/setup.nsi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: dist/mycelium-for-forma-setup.exe
+
+  # ── macOS installers (.pkg — Intel + Apple Silicon) ──────────────────────────
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            label: intel
+            binary: mycelium-for-forma-macos-x64
+            pkg: mycelium-for-forma-macos-intel.pkg
+          - arch: arm64
+            label: apple-silicon
+            binary: mycelium-for-forma-macos-arm64
+            pkg: mycelium-for-forma-macos-apple-silicon.pkg
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install connector deps
+        run: npm ci
+        working-directory: mycelium-draft/connectors/forma
+
+      - name: Install build deps
+        run: npm install
+
+      - name: Bundle → CJS + build macOS ${{ matrix.arch }} binary
+        run: node build/bundle.mjs --target=macos
+
+      - name: Prepare pkg root
+        run: |
+          mkdir -p installer/macos/pkg-root/usr/local/bin
+          cp dist/${{ matrix.binary }} installer/macos/pkg-root/usr/local/bin/mycelium-for-forma
+          chmod +x installer/macos/pkg-root/usr/local/bin/mycelium-for-forma
+          chmod +x installer/macos/scripts/postinstall
+
+      - name: Build component pkg
+        run: |
+          pkgbuild \
+            --root installer/macos/pkg-root \
+            --scripts installer/macos/scripts \
+            --identifier org.mycelium.forma \
+            --version 0.1.0 \
+            dist/mycelium-for-forma.pkg
+
+      - name: Build distribution pkg
+        run: |
+          productbuild \
+            --distribution installer/macos/Distribution.xml \
+            --package-path dist \
+            dist/${{ matrix.pkg }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.label }}
+          path: dist/${{ matrix.pkg }}
+
+  # ── GitHub Release (tags only) ───────────────────────────────────────────────
+  release:
+    needs: [build-windows, build-macos]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: windows-installer,     path: dist }
+      - uses: actions/download-artifact@v4
+        with: { name: macos-intel,           path: dist }
+      - uses: actions/download-artifact@v4
+        with: { name: macos-apple-silicon,   path: dist }
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            dist/mycelium-for-forma-setup.exe
+            dist/mycelium-for-forma-macos-intel.pkg
+            dist/mycelium-for-forma-macos-apple-silicon.pkg

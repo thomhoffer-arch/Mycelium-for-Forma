@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# macOS postinstall — create system-wide config dir + .env template.
+# Runs as root; writes to /usr/local/etc (not $HOME).
+set -euo pipefail
+
+CONFIG_DIR="/usr/local/etc/mycelium-for-forma"
+mkdir -p "$CONFIG_DIR"
+
+if [ ! -f "$CONFIG_DIR/.env" ]; then
+  cat > "$CONFIG_DIR/.env.example" <<'EOF'
+# FORMA_TOKEN — APS OAuth Bearer token (2- or 3-legged)
+# Get one at: https://aps.autodesk.com/ → My Apps → Generate Token
+FORMA_TOKEN=
+
+# FORMA_PROJECT_ID — your Forma project URN or ID
+FORMA_PROJECT_ID=
+
+# FORMA_URL — leave blank to use the default Autodesk API base
+# FORMA_URL=https://developer.api.autodesk.com/forma
+EOF
+  echo "mycelium-for-forma: copy $CONFIG_DIR/.env.example to $CONFIG_DIR/.env and add your credentials."
+fi
+
+# Ensure /usr/local/bin is on the PATH for all users
+PATHS_FILE="/etc/paths.d/mycelium-for-forma"
+echo "/usr/local/bin" > "$PATHS_FILE"
+
+exit 0
