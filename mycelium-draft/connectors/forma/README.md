@@ -1,8 +1,8 @@
 # mycelium-for-forma
 
-A [Mycelium](https://connectivespine.org) connector for **Autodesk Forma** — early-design site/massing records.
+A [Mycelium Studio](https://myceliumstudio.io) connector for **Autodesk Forma** — early-design site and massing records.
 
-Forma sits before the BIM model exists, so join keys are `zone` and `classification` rather than `ifcGuid`. Useful for tracking early-design intent through to coordination.
+Forma operates before a BIM model exists, so records join on `zone` and `classification` rather than `ifcGuid`. This connector pulls those early-design elements into Mycelium Studio's Connective Spine so intent can be tracked through to coordination.
 
 ## Install
 
@@ -22,10 +22,15 @@ Should print `"conformant": true`.
 
 Replace `fetchSource()` in `connector.mjs` with a call to the Forma API. Keep the field shape — the spine adapter normalises and conformance-checks the rest.
 
-## Reference
+## Credentials
 
-- [Mycelium spec](https://connectivespine.org/spec/)
-- [mycelium-sdk on npm](https://www.npmjs.com/package/mycelium-sdk)
+| Env var | Value |
+|---|---|
+| `FORMA_TOKEN` | APS OAuth Bearer token — generate at [aps.autodesk.com](https://aps.autodesk.com) |
+| `FORMA_PROJECT_ID` | Your Forma project URN or ID |
+| `FORMA_URL` | Optional — defaults to the Autodesk API base |
+
+Copy `.env.example` to `.env` and fill in your values.
 
 ## License
 

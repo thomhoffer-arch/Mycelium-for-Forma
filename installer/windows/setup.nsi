@@ -8,7 +8,7 @@ Unicode True
 
 !define APP_NAME      "Mycelium for Forma"
 !define APP_VERSION   "0.1.0"
-!define APP_PUBLISHER "Mycelium / OpenAEC"
+!define APP_PUBLISHER "Mycelium Studio"
 !define APP_EXE       "mycelium-for-forma.exe"
 !define UNREG_KEY     "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyceliumForForma"
 
